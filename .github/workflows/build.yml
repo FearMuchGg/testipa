@@ -27,13 +27,20 @@ jobs:
             -configuration Debug \
             CODE_SIGNING_ALLOWED=NO
 
-      - name: Zip .app for artifact
+      - name: Find and zip .app
         run: |
-          cd build/Debug-iphonesimulator
-          zip -r DDOSPrototype.app.zip DDOSPrototype.app
+          APP_PATH=$(find . -name "*.app" -type d | head -n 1)
+          if [ -z "$APP_PATH" ]; then
+            echo "❌ No .app found"
+            exit 1
+          fi
+          echo "✅ Found app at $APP_PATH"
+          cd "$(dirname "$APP_PATH")"
+          zip -r DDOSPrototype.app.zip "$(basename "$APP_PATH")"
+          echo "✅ Zipped app"
 
       - name: Upload .app.zip
         uses: actions/upload-artifact@v4
         with:
           name: DDOSPrototype-simulator-app
-          path: build/Debug-iphonesimulator/DDOSPrototype.app.zip
+          path: DDOSPrototype.app.zip
