@@ -27,7 +27,8 @@ jobs:
             -configuration Release \
             -derivedDataPath ./DerivedData \
             CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO
+            CODE_SIGNING_REQUIRED=NO \
+            VALIDATE_EMBEDDED_BINARY=NO
 
       - name: Package .app into .ipa
         run: |
