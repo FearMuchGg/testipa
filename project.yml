@@ -2,14 +2,30 @@ name: DDOSPrototype
 options:
   bundleIdPrefix: com.example
   deploymentTarget:
-    iOS: 15.0
+    iOS: 16.2
 targets:
   DDOSPrototype:
     type: application
     platform: iOS
     sources: [DDOSPrototype]
+    dependencies:
+      - target: DDoSLiveActivityWidget
     info:
       path: DDOSPrototype/Info.plist
       properties:
         CFBundleDisplayName: DDOSPrototype
         UILaunchScreen: ~
+        NSSupportsLiveActivities: true
+  DDoSLiveActivityWidget:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: DDoSLiveActivityWidget
+      - path: DDOSPrototype/LiveActivityAttributes.swift
+      - path: DDOSPrototype/AppIntent.swift
+    info:
+      path: DDoSLiveActivityWidget/Info.plist
+      properties:
+        CFBundleDisplayName: DDoSLiveActivityWidget
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
