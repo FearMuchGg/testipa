@@ -18,29 +18,31 @@ jobs:
       - name: Generate Xcode project
         run: xcodegen generate
 
-      - name: Archive app for iOS device (unsigned)
+      - name: Build .app for device (unsigned)
         run: |
-          xcodebuild archive \
+          xcodebuild build \
             -project DDOSPrototype.xcodeproj \
             -scheme DDOSPrototype \
-            -archivePath build/DDOSPrototype.xcarchive \
             -sdk iphoneos \
             -configuration Release \
+            -derivedDataPath ./DerivedData \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO
 
-      - name: Export unsigned IPA
+      - name: Package .app into .ipa
         run: |
-          mkdir -p build/ipa
-          xcodebuild -exportArchive \
-            -archivePath build/DDOSPrototype.xcarchive \
-            -exportPath build/ipa \
-            -exportOptionsPlist exportOptions.plist \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO
+          APP_PATH=$(find ./DerivedData -name "*.app" -type d | head -n 1)
+          if [ -z "$APP_PATH" ]; then
+            echo "❌ .app not found"
+            exit 1
+          fi
+          echo "✅ Found app at $APP_PATH"
+          mkdir -p Payload
+          cp -r "$APP_PATH" Payload/
+          zip -r DDOSPrototype.ipa Payload/
 
       - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
           name: DDOSPrototype-unsigned.ipa
-          path: build/ipa/DDOSPrototype.ipa
+          path: DDOSPrototype.ipa
