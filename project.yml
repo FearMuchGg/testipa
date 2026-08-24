@@ -3,6 +3,10 @@ options:
   bundleIdPrefix: com.example
   deploymentTarget:
     iOS: 16.2
+  settings:
+    CODE_SIGNING_ALLOWED: NO
+    CODE_SIGN_IDENTITY: ""
+    PROVISIONING_PROFILE_SPECIFIER: ""
 targets:
   DDOSPrototype:
     type: application
@@ -15,8 +19,13 @@ targets:
       properties:
         CFBundleDisplayName: DDOSPrototype
         UILaunchScreen: ~
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait, UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight]
         NSSupportsLiveActivities: true
         NSSupportsLiveActivitiesFrequentUpdates: true
+    settings:
+      CODE_SIGNING_ALLOWED: NO
+      CODE_SIGN_IDENTITY: ""
+      PROVISIONING_PROFILE_SPECIFIER: ""
   DDoSLiveActivityWidget:
     type: app-extension
     platform: iOS
@@ -28,5 +37,10 @@ targets:
       path: DDoSLiveActivityWidget/Info.plist
       properties:
         CFBundleDisplayName: DDoSLiveActivityWidget
+        CFBundleIdentifier: com.example.DDoSLiveActivityWidget
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      CODE_SIGNING_ALLOWED: NO
+      CODE_SIGN_IDENTITY: ""
+      PROVISIONING_PROFILE_SPECIFIER: ""
