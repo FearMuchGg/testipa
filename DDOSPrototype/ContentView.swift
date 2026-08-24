@@ -2,45 +2,22 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var isMenuOpen = false
-    
-    var body: some View {
-        ZStack(alignment: .leading) {
-            DashboardView(isMenuOpen: $isMenuOpen)
-                .offset(x: isMenuOpen ? 240 : 0)
-                .scaleEffect(isMenuOpen ? 0.9 : 1.0)
-                .animation(.spring(response: 0.5, dampingFraction: 0.8), value: isMenuOpen)
-            
-            SideMenuView(isMenuOpen: $isMenuOpen)
-                .offset(x: isMenuOpen ? 0 : -300)
-                .animation(.spring(response: 0.5, dampingFraction: 0.8), value: isMenuOpen)
-        }
-        .gesture(
-            DragGesture()
-                .onEnded { gesture in
-                    if gesture.translation.width > 80 {
-                        isMenuOpen = true
-                    } else if gesture.translation.width < -80 {
-                        isMenuOpen = false
-                    }
-                }
-        )
-    }
-}
-
-struct DashboardView: View {
-    @Binding var isMenuOpen: Bool
-    
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 24) {
+                    // Верхние показатели
                     HStack(spacing: 16) {
-                        StatCard(title: "Всего ботов", value: "30", icon: "person.3.fill")
-                        StatCard(title: "Онлайн", value: "35", icon: "wifi")
+                        StatCard(title: "Всего ботов", value: "35", icon: "person.3.fill")
+                        StatCard(title: "Онлайн", value: "30", icon: "wifi")
                     }
+                    
+                    // Статус сервера
                     ServerStatusCard()
+                    
+                    // Кнопка атаки (без текста)
                     AttackButton()
+                    
                     Spacer(minLength: 40)
                 }
                 .padding(.horizontal)
@@ -49,15 +26,11 @@ struct DashboardView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        withAnimation {
-                            isMenuOpen.toggle()
-                        }
-                    } label: {
-                        Image(systemName: "line.3.horizontal")
-                            .font(.title2)
-                            .foregroundColor(.primary)
-                    }
+                    // Кнопка-заглушка (три полоски) — без функционала
+                    Image(systemName: "line.3.horizontal")
+                        .font(.title2)
+                        .foregroundColor(.primary)
+                        // можно добавить .onTapGesture { } если нужно, но оставим просто как декорацию
                 }
             }
             .background(
@@ -72,6 +45,7 @@ struct DashboardView: View {
     }
 }
 
+// MARK: - Карточка статистики
 struct StatCard: View {
     let title: String
     let value: String
@@ -105,8 +79,9 @@ struct StatCard: View {
     }
 }
 
+// MARK: - Карточка статуса сервера
 struct ServerStatusCard: View {
-    @State private var isRunning = true
+    @State private var isRunning = true // для демонстрации можно переключать
     
     var body: some View {
         ZStack {
@@ -127,154 +102,69 @@ struct ServerStatusCard: View {
                         Circle()
                             .fill(isRunning ? Color.green : Color.red)
                             .frame(width: 12, height: 12)
-                            .shadow(color: isRunning ? .green : .red, radius: 6)
+                            .shadow(color: isRunning ? .green.opacity(0.6) : .red.opacity(0.6), radius: 6)
                         Text(isRunning ? "run" : "stop")
-                            .font(.system(size: 20, weight: .semibold, design: .rounded))
+                            .font(.title2.bold())
                             .foregroundColor(.white)
                     }
                 }
                 Spacer()
-                Image(systemName: "server.rack")
-                    .font(.largeTitle)
-                    .foregroundColor(.white.opacity(0.3))
+                // Небольшой индикатор пульсации для эффекта
+                if isRunning {
+                    Circle()
+                        .stroke(Color.green.opacity(0.3), lineWidth: 2)
+                        .frame(width: 40, height: 40)
+                        .scaleEffect(1.0)
+                        .opacity(0.8)
+                        .animation(Animation.easeInOut(duration: 1.5).repeatForever(autoreverses: true), value: isRunning)
+                }
             }
             .padding()
         }
-        .frame(height: 90)
-        .frame(maxWidth: .infinity)
+        .frame(height: 80)
     }
 }
 
+// MARK: - Кнопка запуска атаки (без подписи)
 struct AttackButton: View {
-    @State private var isPulsing = false
+    @State private var isAnimating = false
     
     var body: some View {
-        ZStack {
-            Circle()
-                .fill(Color.red.opacity(0.2))
-                .frame(width: 160, height: 160)
-                .scaleEffect(isPulsing ? 1.2 : 1.0)
-                .opacity(isPulsing ? 0.0 : 0.8)
-                .animation(
-                    Animation.easeInOut(duration: 1.2).repeatForever(autoreverses: false),
-                    value: isPulsing
-                )
-            
-            Button {
-                let generator = UIImpactFeedbackGenerator(style: .heavy)
-                generator.impactOccurred()
-            } label: {
-                ZStack {
-                    Circle()
-                        .fill(
-                            LinearGradient(
-                                colors: [Color.red, Color.purple],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
+        Button {
+            // Заглушка: просто вибрация или анимация
+            isAnimating.toggle()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                isAnimating.toggle()
+            }
+        } label: {
+            ZStack {
+                Circle()
+                    .fill(
+                        LinearGradient(
+                            colors: [Color.red, Color.purple],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
                         )
-                        .frame(width: 120, height: 120)
-                        .shadow(color: .red.opacity(0.4), radius: 20, x: 0, y: 8)
-                    
-                    Image(systemName: "play.fill")
-                        .font(.system(size: 44))
-                        .foregroundColor(.white)
-                        .shadow(radius: 4)
-                }
+                    )
+                    .frame(width: 80, height: 80)
+                    .shadow(color: .red.opacity(0.5), radius: 20, x: 0, y: 0)
+                    .scaleEffect(isAnimating ? 0.9 : 1.0)
+                    .animation(.easeInOut(duration: 0.2), value: isAnimating)
+                
+                Image(systemName: "bolt.fill")
+                    .font(.largeTitle)
+                    .foregroundColor(.white)
+                    .rotationEffect(.degrees(isAnimating ? 360 : 0))
+                    .animation(.easeInOut(duration: 0.6), value: isAnimating)
             }
-            .buttonStyle(ScaleButtonStyle())
         }
+        .buttonStyle(PlainButtonStyle())
         .padding(.top, 10)
-        .onAppear {
-            isPulsing = true
-        }
     }
 }
 
-struct ScaleButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .scaleEffect(configuration.isPressed ? 0.85 : 1.0)
-            .animation(.spring(response: 0.3), value: configuration.isPressed)
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
     }
-}
-
-struct SideMenuView: View {
-    @Binding var isMenuOpen: Bool
-    
-    var body: some View {
-        ZStack {
-            Color.black.opacity(0.3)
-                .ignoresSafeArea()
-                .onTapGesture {
-                    withAnimation {
-                        isMenuOpen = false
-                    }
-                }
-            
-            VStack(alignment: .leading, spacing: 24) {
-                VStack(alignment: .leading, spacing: 6) {
-                    Image(systemName: "person.crop.circle.fill")
-                        .resizable()
-                        .frame(width: 60, height: 60)
-                        .foregroundColor(.white.opacity(0.8))
-                    Text("Тестовый режим")
-                        .font(.title3)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
-                    Text("v0.1")
-                        .font(.caption)
-                        .foregroundColor(.white.opacity(0.5))
-                }
-                .padding(.bottom, 20)
-                
-                Divider().background(Color.white.opacity(0.2))
-                
-                MenuItem(icon: "house.fill", title: "Главная")
-                MenuItem(icon: "chart.pie.fill", title: "Статистика")
-                MenuItem(icon: "gearshape.fill", title: "Настройки")
-                MenuItem(icon: "questionmark.circle.fill", title: "Помощь")
-                
-                Spacer()
-            }
-            .padding(.top, 60)
-            .padding(.horizontal, 28)
-            .frame(width: 280, alignment: .leading)
-            .background(
-                LinearGradient(
-                    colors: [Color(red: 0.15, green: 0.1, blue: 0.25), Color(red: 0.05, green: 0.05, blue: 0.15)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
-            )
-            .offset(x: isMenuOpen ? 0 : -280)
-            .animation(.spring(response: 0.5, dampingFraction: 0.8), value: isMenuOpen)
-        }
-    }
-}
-
-struct MenuItem: View {
-    let icon: String
-    let title: String
-    
-    var body: some View {
-        HStack(spacing: 16) {
-            Image(systemName: icon)
-                .font(.title3)
-                .foregroundColor(.white.opacity(0.7))
-                .frame(width: 28)
-            Text(title)
-                .font(.body)
-                .foregroundColor(.white)
-            Spacer()
-        }
-        .padding(.vertical, 10)
-        .contentShape(Rectangle())
-        .onTapGesture { }
-    }
-}
-
-#Preview {
-    ContentView()
 }
