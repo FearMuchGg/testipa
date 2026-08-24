@@ -39,12 +39,12 @@ targets:
       path: DDoSLiveActivityWidget/Info.plist
       properties:
         CFBundleDisplayName: DDoSLiveActivityWidget
-        CFBundleIdentifier: com.example.DDoSLiveActivityWidget
+        CFBundleIdentifier: com.example.DDOSPrototype.widget
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.example.DDOSPrototype.widget
       CODE_SIGNING_ALLOWED: NO
       CODE_SIGN_IDENTITY: ""
       PROVISIONING_PROFILE_SPECIFIER: ""
       CODE_SIGNING_REQUIRED: NO
-      VALIDATE_EMBEDDED_BINARY: NO
