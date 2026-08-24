@@ -1,40 +1,39 @@
-    yaml
-    name: Build for Simulator (no signing)
+name: Build for Simulator (no signing)
 
-    on:
-      push:
-        branches: [ main ]
-      workflow_dispatch:
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
 
-    jobs:
-      build:
-        runs-on: macos-latest
-        steps:
-          - name: Checkout code
-            uses: actions/checkout@v4
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-          - name: Install xcodegen
-            run: brew install xcodegen
+      - name: Install xcodegen
+        run: brew install xcodegen
 
-          - name: Generate Xcode project
-            run: xcodegen generate
+      - name: Generate Xcode project
+        run: xcodegen generate
 
-          - name: Build app for simulator
-            run: |
-              xcodebuild build \
-                -project DDOSPrototype.xcodeproj \
-                -scheme DDOSPrototype \
-                -sdk iphonesimulator \
-                -configuration Debug \
-                CODE_SIGNING_ALLOWED=NO
+      - name: Build app for simulator
+        run: |
+          xcodebuild build \
+            -project DDOSPrototype.xcodeproj \
+            -scheme DDOSPrototype \
+            -sdk iphonesimulator \
+            -configuration Debug \
+            CODE_SIGNING_ALLOWED=NO
 
-          - name: Zip .app for artifact
-            run: |
-              cd build/Debug-iphonesimulator
-              zip -r DDOSPrototype.app.zip DDOSPrototype.app
+      - name: Zip .app for artifact
+        run: |
+          cd build/Debug-iphonesimulator
+          zip -r DDOSPrototype.app.zip DDOSPrototype.app
 
-          - name: Upload .app.zip
-            uses: actions/upload-artifact@v4
-            with:
-              name: DDOSPrototype-simulator-app
-              path: build/Debug-iphonesimulator/DDOSPrototype.app.zip
+      - name: Upload .app.zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: DDOSPrototype-simulator-app
+          path: build/Debug-iphonesimulator/DDOSPrototype.app.zip
