@@ -28,6 +28,5 @@ targets:
       path: DDoSLiveActivityWidget/Info.plist
       properties:
         CFBundleDisplayName: DDoSLiveActivityWidget
-        CFBundleIdentifier: com.example.DDOSPrototype.widget
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
