@@ -1,0 +1,15 @@
+name: DDOSPrototype
+options:
+  bundleIdPrefix: com.example
+  deploymentTarget:
+    iOS: 15.0
+targets:
+  DDOSPrototype:
+    type: application
+    platform: iOS
+    sources: [DDOSPrototype]
+    info:
+      path: DDOSPrototype/Info.plist
+      properties:
+        CFBundleDisplayName: DDOSPrototype
+        UILaunchScreen: ~
