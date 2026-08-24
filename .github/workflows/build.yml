@@ -18,20 +18,31 @@ jobs:
       - name: Generate Xcode project
         run: xcodegen generate
 
-      - name: Build app for simulator
+      - name: Build app for simulator with verbose output
         run: |
           xcodebuild build \
             -project DDOSPrototype.xcodeproj \
             -scheme DDOSPrototype \
             -sdk iphonesimulator \
             -configuration Debug \
-            CODE_SIGNING_ALLOWED=NO
+            -derivedDataPath ./DerivedData \
+            CODE_SIGNING_ALLOWED=NO \
+            -verbose
+
+      - name: Show build output structure
+        run: |
+          echo "=== DerivedData contents ==="
+          ls -la ./DerivedData || echo "DerivedData not found"
+          echo "=== Find .app files ==="
+          find . -name "*.app" -type d
+          echo "=== Build log ==="
+          cat build.log || echo "No build.log"
 
       - name: Find and zip .app
         run: |
           APP_PATH=$(find . -name "*.app" -type d | head -n 1)
           if [ -z "$APP_PATH" ]; then
-            echo "❌ No .app found"
+            echo "❌ No .app found, exiting"
             exit 1
           fi
           echo "✅ Found app at $APP_PATH"
