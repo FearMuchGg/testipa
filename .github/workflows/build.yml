@@ -1,4 +1,4 @@
-name: Build for Simulator (no signing)
+name: Build IPA (unsigned)
 
 on:
   push:
@@ -18,40 +18,29 @@ jobs:
       - name: Generate Xcode project
         run: xcodegen generate
 
-      - name: Build app for simulator with verbose output
+      - name: Archive app for iOS device (unsigned)
         run: |
-          xcodebuild build \
+          xcodebuild archive \
             -project DDOSPrototype.xcodeproj \
             -scheme DDOSPrototype \
-            -sdk iphonesimulator \
-            -configuration Debug \
-            -derivedDataPath ./DerivedData \
+            -archivePath build/DDOSPrototype.xcarchive \
+            -sdk iphoneos \
+            -configuration Release \
             CODE_SIGNING_ALLOWED=NO \
-            -verbose
+            CODE_SIGNING_REQUIRED=NO
 
-      - name: Show build output structure
+      - name: Export unsigned IPA
         run: |
-          echo "=== DerivedData contents ==="
-          ls -la ./DerivedData || echo "DerivedData not found"
-          echo "=== Find .app files ==="
-          find . -name "*.app" -type d
-          echo "=== Build log ==="
-          cat build.log || echo "No build.log"
+          mkdir -p build/ipa
+          xcodebuild -exportArchive \
+            -archivePath build/DDOSPrototype.xcarchive \
+            -exportPath build/ipa \
+            -exportOptionsPlist exportOptions.plist \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO
 
-      - name: Find and zip .app
-        run: |
-          APP_PATH=$(find . -name "*.app" -type d | head -n 1)
-          if [ -z "$APP_PATH" ]; then
-            echo "❌ No .app found, exiting"
-            exit 1
-          fi
-          echo "✅ Found app at $APP_PATH"
-          cd "$(dirname "$APP_PATH")"
-          zip -r DDOSPrototype.app.zip "$(basename "$APP_PATH")"
-          echo "✅ Zipped app"
-
-      - name: Upload .app.zip
+      - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
-          name: DDOSPrototype-simulator-app
-          path: DDOSPrototype.app.zip
+          name: DDOSPrototype-unsigned.ipa
+          path: build/ipa/DDOSPrototype.ipa
