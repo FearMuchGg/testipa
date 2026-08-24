@@ -3,6 +3,13 @@ import WidgetKit
 import SwiftUI
 import ActivityKit
 
+@main
+struct DDoSLiveActivityWidgetBundle: WidgetBundle {
+    var body: some Widget {
+        DDoSLiveActivityWidget()
+    }
+}
+
 struct DDoSLiveActivityWidget: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: DDoSAttributes.self) { context in
