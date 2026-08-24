@@ -16,6 +16,7 @@ targets:
         CFBundleDisplayName: DDOSPrototype
         UILaunchScreen: ~
         NSSupportsLiveActivities: true
+        NSSupportsLiveActivitiesFrequentUpdates: true
   DDoSLiveActivityWidget:
     type: app-extension
     platform: iOS
@@ -27,5 +28,6 @@ targets:
       path: DDoSLiveActivityWidget/Info.plist
       properties:
         CFBundleDisplayName: DDoSLiveActivityWidget
+        CFBundleIdentifier: com.example.DDOSPrototype.widget
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
